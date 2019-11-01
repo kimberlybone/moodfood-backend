@@ -2,7 +2,7 @@ class ApplicationController < ActionController::API
   before_action :authorized
 
  def authentication_json(user_id)
-   {token: make_token(user_id), user_id: user_id}
+   {token: make_token(user_id), user: UserSerializer.new(User.find(user_id))}
  end
 
  def make_token(user_id)

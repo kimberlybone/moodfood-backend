@@ -1,6 +1,7 @@
 class LoginController < ApplicationController
   skip_before_action :authorized, only: [:create]
   def create
+    # byebug
     user = User.find_by(name: params[:name])
     if user && user.authenticate(params[:password])
       render json: authentication_json(user.id)
