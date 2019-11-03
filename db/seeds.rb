@@ -50,7 +50,15 @@ recipes.each do |recipe|
     name: recipe['title'],
     image: recipe['image'],
     user: kim,
-    instructions: '1,2,3'
+    instructions: '1,2,3',
+    mood: happy
   )
+  # filtered_keys = recipe.keys.filter{|key| key.include?('ingredients') && recipe[key] != nil}
+  # filtered_keys.each do |key|
+  #   RecipeIngredient.create(
+  #     recipe:
+  #   )
 end
+
+
 # Use search recipes and look through each recipe to get ID then compare ID with "Get Recipe Information"
