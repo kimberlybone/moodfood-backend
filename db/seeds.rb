@@ -10,6 +10,7 @@ require 'rest-client'
 User.destroy_all
 Mood.destroy_all
 
+# USER
 kim = User.create(name: "Kim", email: "kim@gmail.com", location: "New York City", password: "1")
 matt = User.create(name: "Matt", email: "mattisthecooliest@matt.matt", location: "NYC", password: "1")
 sukrit = User.create(name: "Sukrit", email: "sukrit@sukrit.sukrit", location: "NYC", password: "1")
@@ -17,6 +18,7 @@ michelle = User.create(name: "Michelle", email: "michelle@michelle.michelle", lo
 avi = User.create(name: "Avi", email: "avi@avi.avi", location: "NYC", password: "1")
 javone = User.create(name: "Javone", email: "javone@javone.javone", location: "NYC", password: "1")
 
+# MOOD
 happy = Mood.create(name: "Happy|Energetic")
 anxious = Mood.create(name: "Anxious")
 adventurous = Mood.create(name: "Adventurous|Curious")
@@ -26,6 +28,8 @@ sad = Mood.create(name: "Sad")
 calm = Mood.create(name: "Calm")
 indifferent = Mood.create(name: "Indifferent")
 angry = Mood.create(name: "Angry|Frustrated")
+
+
 
 mood_array = ['happy', 'anxious', 'adventurous', 'romantic', 'stressed', 'sad', 'calm', 'indifferent', 'angry' ]
 ingredient_array = ['cheese', 'chicken', 'egg', 'kale']
@@ -41,10 +45,10 @@ ingredient_array.each do |r_ingredient|
     end
   end
   recipes << recipe_ingredient_array
-  # byebug
 end
 recipes = recipes.flatten
 
+# RECIPE & RECIPE INGREDIENT
 recipes.each do |recipe|
   new_recipe = Recipe.create(
     name: recipe['title'],
@@ -58,7 +62,7 @@ recipes.each do |recipe|
     recipe[key].each do |val|
       RecipeIngredient.create(
         recipe: new_recipe,
-        ingredient: Ingredient.find_by(name: val['name'])
+        name: Ingredient.find_by(name: val['originalString'])
       )
     end
   end
