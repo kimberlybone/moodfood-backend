@@ -5,6 +5,8 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+require 'rest-client'
 User.destroy_all
 Mood.destroy_all
 
@@ -23,4 +25,32 @@ stressed = Mood.create(name: "Stressed|Tense")
 sad = Mood.create(name: "Sad")
 calm = Mood.create(name: "Calm")
 indifferent = Mood.create(name: "Indifferent")
-happy = Mood.create(name: "Angry|Frustrated")
+angry = Mood.create(name: "Angry|Frustrated")
+
+mood_array = ['happy', 'anxious', 'adventurous', 'romantic', 'stressed', 'sad', 'calm', 'indifferent', 'angry' ]
+ingredient_array = ['cheese', 'chicken', 'egg', 'kale']
+
+recipes = []
+
+ingredient_array.each do |r_ingredient|
+  recipe_ingredient_json = RestClient.get('https://api.spoonacular.com/recipes/find' + 'ByIngredients?number=50&ingredients=' + r_ingredient + '&apiKey=' + ENV['API_KEY'])
+  recipe_ingredient_array = JSON.parse(recipe_ingredient_json)
+  mood_array.each do |mood|
+    recipe_ingredient_array.each do |recipe|
+      recipe['mood'] = mood
+    end
+  end
+  recipes << recipe_ingredient_array
+  # byebug
+end
+recipes = recipes.flatten
+
+recipes.each do |recipe|
+  new_recipe = Recipe.create(
+    name: recipe['title'],
+    image: recipe['image'],
+    user: kim,
+    instructions: '1,2,3'
+  )
+end
+# Use search recipes and look through each recipe to get ID then compare ID with "Get Recipe Information"
