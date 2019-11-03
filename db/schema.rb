@@ -29,8 +29,8 @@ ActiveRecord::Schema.define(version: 2019_11_03_195250) do
   end
 
   create_table "recipe_ingredients", force: :cascade do |t|
-    t.bigint "recipe_id"
-    t.bigint "ingredient_id"
+    t.bigint "recipe_id", null: false
+    t.bigint "ingredient_id", null: false
     t.string "name"
     t.string "image"
     t.datetime "created_at", precision: 6, null: false
@@ -60,6 +60,8 @@ ActiveRecord::Schema.define(version: 2019_11_03_195250) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "recipe_ingredients", "ingredients"
+  add_foreign_key "recipe_ingredients", "recipes"
   add_foreign_key "recipes", "moods"
   add_foreign_key "recipes", "users"
 end
