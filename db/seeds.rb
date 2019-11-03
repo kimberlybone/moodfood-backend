@@ -53,11 +53,15 @@ recipes.each do |recipe|
     instructions: '1,2,3',
     mood: happy
   )
-  # filtered_keys = recipe.keys.filter{|key| key.include?('ingredients') && recipe[key] != nil}
-  # filtered_keys.each do |key|
-  #   RecipeIngredient.create(
-  #     recipe:
-  #   )
+  filtered_keys = recipe.keys.filter{|key| key.include?('Ingredients') && recipe[key] != nil}
+  filtered_keys.each do |key|
+    recipe[key].each do |val|
+      RecipeIngredient.create(
+        recipe: new_recipe,
+        ingredient: Ingredient.find_by(name: val['name'])
+      )
+    end
+  end
 end
 
 
