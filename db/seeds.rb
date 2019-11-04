@@ -1,14 +1,10 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
 
 require 'rest-client'
+
 User.destroy_all
 Mood.destroy_all
+Recipe.destroy_all
+RecipeIngredient.destroy_all
 
 # USER
 kim = User.create(name: "Kim", email: "kim@gmail.com", location: "New York City", password: "1")
@@ -29,44 +25,90 @@ calm = Mood.create(name: "Calm")
 indifferent = Mood.create(name: "Indifferent")
 angry = Mood.create(name: "Angry|Frustrated")
 
+kale_salad = Recipe.create(name: "Kale Salad",
+                          user: kim,
+                          mood: happy,
+                          instructions: "1. Boil water with pasta 2. Drain water 3. Add sauce",
+                          image: "https://www.gimmesomeoven.com/wp-content/uploads/2014/01/Kale-Cranberry-Salad-1.jpg")
+
+
+noodles = Ingredient.create(name: "kale", image: "kflfk", api_id: 1)
+cheese = Ingredient.create(name: "plum", image: "kflfk", api_id: 2)
+noodles = Ingredient.create(name: "apples are cool", image: "kflfk", api_id: 1)
+cheese = Ingredient.create(name: "beets battle star", image: "kflfk", api_id: 2)
+noodles = Ingredient.create(name: "tuna sandwich", image: "kflfk", api_id: 1)
+cheese = Ingredient.create(name: "ginger", image: "kflfk", api_id: 2)
+
+Ingredient.all.each do |ing|
+  RecipeIngredient.create(name: "RecipeIngredient", recipe: kale_salad, ingredient: ing)
+end
+
+
+
+
+# find_or_create_by(api_key: 10001, name: "cheese", image: "cheese.jpg")
+
 
 
 mood_array = ['happy', 'anxious', 'adventurous', 'romantic', 'stressed', 'sad', 'calm', 'indifferent', 'angry' ]
-ingredient_array = ['cheese', 'chicken', 'egg', 'kale']
+ingredient_array = ['cheese', 'chicken', 'egg', 'kale', 'sugar']
 
 recipes = []
 
-ingredient_array.each do |r_ingredient|
-  recipe_ingredient_json = RestClient.get('https://api.spoonacular.com/recipes/find' + 'ByIngredients?number=50&ingredients=' + r_ingredient + '&apiKey=' + ENV['API_KEY'])
-  recipe_ingredient_array = JSON.parse(recipe_ingredient_json)
-  mood_array.each do |mood|
-    recipe_ingredient_array.each do |recipe|
-      recipe['mood'] = mood
-    end
-  end
-  recipes << recipe_ingredient_array
-end
-recipes = recipes.flatten
-
-# RECIPE & RECIPE INGREDIENT
-recipes.each do |recipe|
-  new_recipe = Recipe.create(
-    name: recipe['title'],
-    image: recipe['image'],
-    user: kim,
-    instructions: '1,2,3',
-    mood: happy
-  )
-  filtered_keys = recipe.keys.filter{|key| key.include?('Ingredients') && recipe[key] != nil}
-  filtered_keys.each do |key|
-    recipe[key].each do |val|
-      RecipeIngredient.create(
-        recipe: new_recipe,
-        name: Ingredient.find_by(name: val['originalString'])
-      )
-    end
-  end
-end
+# ingredient_array.each do |r_ingredient|
+#
+#   # fetch to ingredient find by ingredient API
+#   recipe_ingredient_json = RestClient.get('https://api.spoonacular.com/recipes/find' + 'ByIngredients?number=50&ingredients=' + r_ingredient + '&apiKey=' + ENV['API_KEY'])
+#   recipe_ingredient_array = JSON.parse(recipe_ingredient_json)
+#   # iterate through API response
+#
+#
+#   recipe_id = recipe_ingredient_array.map do |ri|
+#     ri['id']
+#   # fetch to recipe info API with id
+#   end
+#
+#   temp_recipes = recipe_id.map do |id|
+#     recipe_info_json = RestClient.get('https://api.spoonacular.com/recipes/' + id.to_s + '/information?apiKey=' + ENV['API_KEY'])
+#     recipe_info_array = JSON.parse(recipe_info_json)
+#     # push inside iteration since fetches one at a time
+#     recipe_info_array
+#   end
+#
+#   # add 'mood' key to each recipe to match with a mood
+#   temp_recipes.each do |recipe|
+#     mood_array.each do |mood|
+#       recipe['mood'] = mood
+#     end
+#   end
+#
+#   recipes << temp_recipes
+#
+# end
+#
+# recipes = recipes.flatten
+#
+# # RECIPE & RECIPE INGREDIENT
+# recipes.each do |recipe|
+#   new_recipe = Recipe.create(
+#     name: recipe['title'],
+#     image: recipe['image'],
+#     user: kim,
+#     instructions: recipe['instructions'],
+#     mood: Mood.first
+#   )
+#   # filtered_keys = recipe.keys.filter{|key| key.include?('Ingredients') && recipe[key] != nil}
+#   # iterate through each hash of recipe ingredients
+#   recipe['extendedIngredients'].each do |obj|
+#     # can set this to variable & put var as val for ingredient
+#       Ingredient.find_or_create_by(api_key: obj['id'], name: obj['name'], image: obj['image'])
+#       RecipeIngredient.create(
+#         recipe: new_recipe,
+#         ingredient: Ingredient.find_by(name: obj['name']),
+#         name: obj['originalString']
+#       )
+#   end
+# end
 
 
 # Use search recipes and look through each recipe to get ID then compare ID with "Get Recipe Information"

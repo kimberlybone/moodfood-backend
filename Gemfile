@@ -19,6 +19,7 @@ gem 'jwt'
 gem 'dotenv-rails'
 gem 'active_model_serializers'
 gem 'rest-client'
+gem 'ibm_watson'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

@@ -3,6 +3,7 @@ class CreateIngredients < ActiveRecord::Migration[6.0]
     create_table :ingredients do |t|
       t.string :name
       t.string :image
+      t.integer :api_id
 
       t.timestamps
     end
