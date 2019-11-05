@@ -6,7 +6,7 @@ class Recipe < ApplicationRecord
 
   def analyze_mood
     # gather ingredients as a string
-    byebug
+    # byebug
     ing_str = self.ingredients.pluck(:name).join(' ')
     response = NLU.analyze(text: ing_str, features: {entities: {emotion: true, limit: 10, model: ENV['MODEL_ID']}})
     res = response.result

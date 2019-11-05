@@ -11,8 +11,8 @@ class ApplicationController < ActionController::API
  end
 
  def logged_in_user_id
+   # byebug
    token = request.headers["Authorization"]
-
    begin
      decoded_payload = JWT.decode(token, hmac_secret, true, {algorithm: 'HS256'})
      return decoded_payload.first["user_id"].to_i
@@ -30,6 +30,7 @@ class ApplicationController < ActionController::API
  end
 
  def authorized
+   # byebug
    render json: { message: 'Please Log In '}, status: :unauthorized unless logged_in?
  end
 end
