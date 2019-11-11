@@ -65,7 +65,7 @@ class Recipe < ApplicationRecord
       return new_mood
     end
     ing_mood = Mood.find_by(name: new_mood)
-    # self.update(mood: ing_mood)
+    self.update(mood: ing_mood)
   end
 
 end

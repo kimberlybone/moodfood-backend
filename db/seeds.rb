@@ -1,6 +1,7 @@
 
 require 'rest-client'
 require 'csv'
+
 csv = CSV.read("./db/top-1k-ingredients.csv")
 all_ingredients = csv.map do |ing_array|
   split_info = ing_array[0].split(';')
@@ -12,12 +13,17 @@ all_ids = csv.map do |ing_array|
   id = split_info[1]
 end
 
-
 User.destroy_all
 Mood.destroy_all
 Recipe.destroy_all
 RecipeIngredient.destroy_all
 Ingredient.destroy_all
+
+User.reset_pk_sequence
+Mood.reset_pk_sequence
+Recipe.reset_pk_sequence
+RecipeIngredient.reset_pk_sequence
+Ingredient.reset_pk_sequence
 
 # USER
 kim = User.create(name: "Kim", email: "kim@gmail.com", location: "New York City", password: "1")
@@ -45,20 +51,18 @@ kale_salad = Recipe.create(name: "Kale Salad",
                           image: "https://www.gimmesomeoven.com/wp-content/uploads/2014/01/Kale-Cranberry-Salad-1.jpg")
 
 
-noodles = Ingredient.create(name: "kale", image: "kflfk", api_id: 1)
-cheese = Ingredient.create(name: "plum", image: "kflfk", api_id: 2)
-noodles = Ingredient.create(name: "apples are cool", image: "kflfk", api_id: 1)
-cheese = Ingredient.create(name: "beets battle star", image: "kflfk", api_id: 2)
-noodles = Ingredient.create(name: "tuna sandwich", image: "kflfk", api_id: 1)
-cheese = Ingredient.create(name: "ginger", image: "kflfk", api_id: 2)
+noodles = Ingredient.create(name: "kale", image: "kale", api_id: 1)
+cheese = Ingredient.create(name: "plum", image: "plum", api_id: 2)
+noodles = Ingredient.create(name: "apples are cool", image: "apple", api_id: 1)
+cheese = Ingredient.create(name: "beets battle star", image: "beets", api_id: 2)
+noodles = Ingredient.create(name: "tuna sandwich", image: "tuna", api_id: 1)
+cheese = Ingredient.create(name: "ginger", image: "ginger", api_id: 2)
 
 Ingredient.all.each do |ing|
   RecipeIngredient.create(name: "RecipeIngredient", recipe: kale_salad, ingredient: ing)
 end
 
-
 mood_array = ['happy', 'anxious', 'adventurous', 'romantic', 'stressed', 'sad', 'calm', 'indifferent', 'angry' ]
-
 recipes = []
 
 all_ingredients[0..2].each do |ing_name|
@@ -68,7 +72,6 @@ all_ingredients[0..2].each do |ing_name|
   recipe_by_ingredient_array = JSON.parse(recipe_by_ingredient_json)
   # iterate through API response
 
-
   recipe_id = recipe_by_ingredient_array.map do |ri|
     ri['id']
   # fetch to recipe info API with id
@@ -77,8 +80,6 @@ all_ingredients[0..2].each do |ing_name|
   temp_recipes = recipe_id[0..2].map do |id|
     recipe_info_json = RestClient.get('https://api.spoonacular.com/recipes/' + id.to_s + '/information?apiKey=' + ENV['API_KEY'])
     recipe_info_object = JSON.parse(recipe_info_json)
-    # push inside iteration since fetches one at a time
-    byebug
     recipe_info_object
   end
 
@@ -103,10 +104,7 @@ recipes.each do |recipe|
     instructions: recipe['instructions'],
     mood: Mood.first
   )
-  # filtered_keys = recipe.keys.filter{|key| key.include?('Ingredients') && recipe[key] != nil}
-  # iterate through each hash of recipe ingredients
   recipe['extendedIngredients'].each do |obj|
-    # can set this to variable & put var as val for ingredient
       Ingredient.find_or_create_by(api_id: obj['id'], name: obj['name'], image: obj['image'])
       RecipeIngredient.create(
         recipe: new_recipe,
@@ -114,6 +112,7 @@ recipes.each do |recipe|
         name: obj['originalString']
       )
   end
+  new_recipe.analyze_mood
 end
 
 
