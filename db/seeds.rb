@@ -28,15 +28,15 @@ avi = User.create(name: "Avi", email: "avi@avi.avi", location: "NYC", password: 
 javone = User.create(name: "Javone", email: "javone@javone.javone", location: "NYC", password: "1")
 
 # MOOD
-happy = Mood.create(name: "Happy|Energetic")
+happy = Mood.create(name: "Happy")
 anxious = Mood.create(name: "Anxious")
-adventurous = Mood.create(name: "Adventurous|Curious")
+adventurous = Mood.create(name: "Adventurous")
 romantic = Mood.create(name: "Romantic")
-stressed = Mood.create(name: "Stressed|Tense")
+stressed = Mood.create(name: "Stressed")
 sad = Mood.create(name: "Sad")
 calm = Mood.create(name: "Calm")
 indifferent = Mood.create(name: "Indifferent")
-angry = Mood.create(name: "Angry|Frustrated")
+angry = Mood.create(name: "Angry")
 
 kale_salad = Recipe.create(name: "Kale Salad",
                           user: kim,
