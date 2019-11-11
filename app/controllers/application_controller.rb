@@ -2,6 +2,7 @@ class ApplicationController < ActionController::API
   before_action :authorized
 
  def authentication_json(user_id)
+   # byebug
    {token: make_token(user_id), user: UserSerializer.new(User.find(user_id))}
  end
 

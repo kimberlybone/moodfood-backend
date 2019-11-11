@@ -12,10 +12,6 @@ NLU = NaturalLanguageUnderstandingV1.new(
 )
 NLU.service_url = "https://gateway.watsonplatform.net/natural-language-understanding/api"
 
-response = NLU.analyze(
-  url: "www.cnn.com",
-  features: {entities: {sentiment: true, limit: 10, model: ENV['MODEL_ID']}
-  }
-)
+response = NLU.analyze( url: "www.cnn.com", features: {entities: {sentiment: true, limit: 10, model: ENV['MODEL_ID']}})
 
 JSON.pretty_generate(response.result)
