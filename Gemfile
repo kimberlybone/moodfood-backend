@@ -21,6 +21,7 @@ gem 'active_model_serializers'
 gem 'rest-client'
 gem 'ibm_watson'
 gem 'activerecord-reset-pk-sequence'
+gem 'pry'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

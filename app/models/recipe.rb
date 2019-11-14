@@ -7,6 +7,7 @@ class Recipe < ApplicationRecord
   belongs_to :mood
   has_many :recipe_ingredients, dependent: :destroy
   has_many :ingredients, through: :recipe_ingredients
+  has_many :analyzed_instructions
 
   AUTHENTICATOR = Authenticators::IamAuthenticator.new(
     apikey: ENV['AI_API_KEY']
@@ -35,10 +36,15 @@ class Recipe < ApplicationRecord
     emotion_array = mood.map { |m| m['emotion'] }
     max_emotion = str_mood_type_array.detect { |m| str_mood_type_array.count(m) > 1 }
 
-    if str_mood_type_array.length <= 1
+    if mood == []
+      new_mood = 'Indifferent'
+      binding.pry
+    elsif str_mood_type_array.length == 1
       new_mood = str_mood_type_array[0].downcase.capitalize
+      binding.pry
     elsif max_emotion
       new_mood = max_emotion.downcase.capitalize
+      binding.pry
     else
       max_emotion_array = emotion_array[0].map do |emotion_hash|
         emotion_hash.max_by{|x,y| y}
@@ -61,8 +67,7 @@ class Recipe < ApplicationRecord
         else
           new_mood = 'Indifferent'
       end
-
-      return new_mood
+      new_mood
     end
     ing_mood = Mood.find_by(name: new_mood)
     self.update(mood: ing_mood)

@@ -1,0 +1,2 @@
+class StepEquipmentsController < ApplicationController
+end

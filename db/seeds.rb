@@ -1,4 +1,4 @@
-
+require 'pry'
 require 'rest-client'
 require 'csv'
 
@@ -13,17 +13,23 @@ all_ids = csv.map do |ing_array|
   id = split_info[1]
 end
 
+StepEquipment.destroy_all
+AnalyzedInstruction.destroy_all
+RecipeIngredient.destroy_all
+Recipe.destroy_all
 User.destroy_all
 Mood.destroy_all
-Recipe.destroy_all
-RecipeIngredient.destroy_all
 Ingredient.destroy_all
+Equipment.destroy_all
 
 User.reset_pk_sequence
 Mood.reset_pk_sequence
 Recipe.reset_pk_sequence
 RecipeIngredient.reset_pk_sequence
 Ingredient.reset_pk_sequence
+StepEquipment.reset_pk_sequence
+AnalyzedInstruction.reset_pk_sequence
+Equipment.reset_pk_sequence
 
 # USER
 kim = User.create(name: "Kim", email: "kim@gmail.com", location: "New York City", password: "1")
@@ -44,56 +50,47 @@ calm = Mood.create(name: "Calm")
 indifferent = Mood.create(name: "Indifferent")
 angry = Mood.create(name: "Angry")
 
-kale_salad = Recipe.create(name: "Kale Salad",
-                          user: kim,
-                          mood: happy,
-                          instructions: "1. Boil water with pasta 2. Drain water 3. Add sauce",
-                          image: "https://www.gimmesomeoven.com/wp-content/uploads/2014/01/Kale-Cranberry-Salad-1.jpg")
 
+# Ingredient.all.each do |ing|
+#   RecipeIngredient.create(name: "RecipeIngredient", recipe: kale_salad, ingredient: ing)
+# end
 
-noodles = Ingredient.create(name: "kale", image: "kale", api_id: 1)
-cheese = Ingredient.create(name: "plum", image: "plum", api_id: 2)
-noodles = Ingredient.create(name: "apples are cool", image: "apple", api_id: 1)
-cheese = Ingredient.create(name: "beets battle star", image: "beets", api_id: 2)
-noodles = Ingredient.create(name: "tuna sandwich", image: "tuna", api_id: 1)
-cheese = Ingredient.create(name: "ginger", image: "ginger", api_id: 2)
+# mood_array = ['happy']
+recipe_id_array = []
 
-Ingredient.all.each do |ing|
-  RecipeIngredient.create(name: "RecipeIngredient", recipe: kale_salad, ingredient: ing)
-end
-
-mood_array = ['happy', 'anxious', 'adventurous', 'romantic', 'stressed', 'sad', 'calm', 'indifferent', 'angry' ]
-recipes = []
-
-all_ingredients[0..2].each do |ing_name|
+all_ingredients[0..6].each do |ing_name|
 
   # fetch to ingredient find by ingredient API
   recipe_by_ingredient_json = RestClient.get('https://api.spoonacular.com/recipes/find' + 'ByIngredients?number=50&ingredients=' + ing_name + '&apiKey=' + ENV['API_KEY'])
   recipe_by_ingredient_array = JSON.parse(recipe_by_ingredient_json)
   # iterate through API response
 
-  recipe_id = recipe_by_ingredient_array.map do |ri|
-    ri['id']
-  # fetch to recipe info API with id
+  recipe_by_ingredient_array.each do |ri|
+    recipe_id_array << ri['id']
+    # fetch to recipe info API with id
   end
+end
+ new_recipe_id_array = recipe_id_array.uniq
 
-  temp_recipes = recipe_id[0..2].map do |id|
+ # FETCH INDIVIDUAL RECIPES
+ # recipes = []
+
+ binding.pry
+ recipes = new_recipe_id_array[0..6].map do |id|
     recipe_info_json = RestClient.get('https://api.spoonacular.com/recipes/' + id.to_s + '/information?apiKey=' + ENV['API_KEY'])
     recipe_info_object = JSON.parse(recipe_info_json)
     recipe_info_object
   end
 
   # add 'mood' key to each recipe to match with a mood
-  temp_recipes.each do |recipe|
-    mood_array.each do |mood|
-      recipe['mood'] = mood
-    end
-  end
+  # recipes.each do |recipe|
+  #   mood_array.each do |mood|
+  #     recipe['mood'] = mood
+  #   end
+  # end
 
-  recipes << temp_recipes
-end
 
-recipes = recipes.flatten
+# recipes = recipes.flatten
 
 # RECIPE & RECIPE INGREDIENT
 recipes.each do |recipe|
@@ -102,8 +99,33 @@ recipes.each do |recipe|
     image: recipe['image'],
     user: kim,
     instructions: recipe['instructions'],
+    price_per_serving: recipe['pricePerServing'],
+    vegetarian: recipe['vegetarian'],
+    vegan: recipe['vegan'],
+    glutenFree: recipe['glutenFree'],
+    dairyFree: recipe['dairyFree'],
+    preparationMinutes: recipe['preparationMinutes'],
+    cookingMinutes: recipe['cookingMinutes'],
+    servings: recipe['servings'],
+    readyInMinutes: recipe['readyInMinutes'],
+    pairing_text: recipe['winePairing']['pairingText'],
     mood: Mood.first
   )
+
+  recipe['analyzedInstructions'].each do |obj|
+    obj['steps'].each do |step_obj|
+      analyzed_instructions = AnalyzedInstruction.create(step_number: step_obj['number'], step_text: step_obj['step'], recipe: new_recipe)
+
+        step_obj['equipment'].each do |equip|
+          equipment = Equipment.find_or_create_by(name: equip['name'], image: equip['image'])
+          StepEquipment.create(
+            analyzed_instruction: analyzed_instructions,
+            equipment: equipment
+          )
+      end
+    end
+  end
+
   recipe['extendedIngredients'].each do |obj|
       Ingredient.find_or_create_by(api_id: obj['id'], name: obj['name'], image: obj['image'])
       RecipeIngredient.create(
@@ -117,3 +139,20 @@ end
 
 
 # Use search recipes and look through each recipe to get ID then compare ID with "Get Recipe Information"
+
+
+# recipe['analyzedInstructions'].each do |obj|
+#   obj['steps'].each do |step_obj|
+#     puts "💎💎💎💎💎"
+#     puts step_obj['equipment']
+#     equip = step_obj['equipment'].first
+#     equipment = Equipment.find_or_create_by(name: equip['name'], image: equip['image'])
+#     puts "💎💎💎💎💎"
+#   end
+# end
+#
+#
+# StepEquipment.create(
+#   analyzed_instructions_id: 1,
+#   equipment_id: equipment.id
+# )
