@@ -60,11 +60,11 @@ recipe_id_array = []
 
 all_ingredients[0..6].each do |ing_name|
 
-  # fetch to ingredient find by ingredient API
+  # FETCH TO INGREDIENT FOR FIND BY INGREDIENT API
   recipe_by_ingredient_json = RestClient.get('https://api.spoonacular.com/recipes/find' + 'ByIngredients?number=50&ingredients=' + ing_name + '&apiKey=' + ENV['API_KEY'])
   recipe_by_ingredient_array = JSON.parse(recipe_by_ingredient_json)
-  # iterate through API response
 
+  # ITERATE THROUGH API RESPONSE 
   recipe_by_ingredient_array.each do |ri|
     recipe_id_array << ri['id']
     # fetch to recipe info API with id
@@ -92,7 +92,7 @@ end
 
 # recipes = recipes.flatten
 
-# RECIPE & RECIPE INGREDIENT
+# CREATE RECIPES & RECIPE INGREDIENTS
 recipes.each do |recipe|
   new_recipe = Recipe.create(
     name: recipe['title'],
