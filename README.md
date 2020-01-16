@@ -57,7 +57,7 @@ Think of a time when someone asked what you wanted to eat. Usually our response 
   ```
 - Server needs to run on http://localhost:3000
 
-2. Go to frontend repository to view frontend installation
+2. Go to frontend repository to view frontend installation: [View frontend](https://github.com/kimberlybone/moodfood-frontend)
 
 ---
 ***Authors: [Kimberly Bone](https://github.com/kimberlybone)***
