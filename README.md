@@ -1,6 +1,6 @@
 # **MoodFood Backend**
 
-My application uses artificial intelligence to suggest recipes based on a user's current mood in order to enhance it.
+My application uses IBM Watson's Natural Language Understanding software to suggest recipes based on a user's current mood in order to enhance it.
 
 ---
 
